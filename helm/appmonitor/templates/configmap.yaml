@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app.fullname" . }}
+data:
+  application.properties: |
+    # Application Name
+    spring.application.name=appmonitor
+    
+    # Springboot Admin
+    spring.boot.admin.discovery.enabled=false
+    #spring.boot.admin.routes.endpoints=env, metrics, trace, jolokia, info, configprops
+    
+    #Kubernetes Cloud Service Discovery
+    ribbon.http.client.enabled=false
+    spring.cloud.kubernetes.config.enableApi=true
+    #spring.cloud.kubernetes.reload.monitoring-secrets=false
+    spring.cloud.kubernetes.reload.enabled=true
+    spring.cloud.kubernetes.ribbon.enabled=false
+    spring.cloud.kubernetes.reload.mode=event
+    spring.cloud.kubernetes.reload.period=15000
+    spring.cloud.kubernetes.reload.strategy=restart_context
+    
+    #Spring Cloud Context Configuration required with auto reload config from configmap
+    #https://stackoverflow.com/questions/54007907/spring-cloud-kubernetes-spring-boot-fails-to-start-when-config-reload-is-enabl
+    management.endpoint.restart.enabled=true

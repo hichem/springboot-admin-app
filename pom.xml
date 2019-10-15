@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.9.RELEASE</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.example</groupId>
+	<artifactId>appmonitor</artifactId>
+	<version>1.0</version>
+	<name>appmonitor</name>
+	<description>Monitoring Application for SpringBoot Microservices</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<mycontainerregistry>acvcontainerregistry.azurecr.io</mycontainerregistry>
+		<docker.image.prefix>${mycontainerregistry}/${project.artifactId}</docker.image.prefix>
+		<dockerfile.skipDockerInfo>true</dockerfile.skipDockerInfo>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+
+		<!-- Springboot Admin -->
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-server</artifactId>
+			<version>2.1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-server-ui-login</artifactId>
+			<version>1.5.7</version>
+		</dependency>
+
+		<!-- Kubernetes Cloud Starter -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-kubernetes</artifactId>
+			<version>1.0.1.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-kubernetes-config</artifactId>
+			<version>1.0.1.RELEASE</version>
+		</dependency>
+
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Build docker image -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.10</version>
+				<configuration>
+					<repository>${docker.image.prefix}</repository>
+					<serverId>${mycontainerregistry}</serverId>
+					<registryUrl>https://${mycontainerregistry}</registryUrl>
+					<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+					<tag>${project.version}</tag>
+					<buildArgs>
+						<JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+
+				<!-- Automate image creation and publishing -->
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Generate Helm Chart / Kiwigrid -->
+			<plugin>
+				<groupId>com.kiwigrid</groupId>
+				<artifactId>helm-maven-plugin</artifactId>
+				<version>4.3</version>
+
+				<configuration>
+					<chartDirectory>${project.basedir}/helm/${project.artifactId}</chartDirectory>
+					<chartVersion>${project.version}</chartVersion>
+					<appVersion>${project.version}</appVersion>
+					<!-- This is the related section when using binary download -->
+					<helmDownloadUrl>https://acvcontainerregistry.azurecr.io/helm/v1/repo/${project.artifactId}-${project.version}.tgz</helmDownloadUrl>
+					<useLocalHelmBinary>true</useLocalHelmBinary>
+					<autoDetectLocalHelmBinary>true</autoDetectLocalHelmBinary>
+					<outputDirectory>${project.build.directory}</outputDirectory>
+
+					<!-- AZURE NOT SUPPORTED -->
+					<!-- <uploadRepoStable> <name>${mycontainerregistry}</name> <url>https://acvcontainerregistry.azurecr.io/helm/v1/repo</url> 
+						<type>AZURE</type> </uploadRepoStable> <uploadRepoSnapshot> <name>${mycontainerregistry}</name> 
+						<url>https://acvcontainerregistry.azurecr.io/helm/v1/repo</url> <type>AZURE</type> 
+						</uploadRepoSnapshot> -->
+
+					<!-- Mandatory when you use a custom lifecycle -->
+					<extensions>true</extensions>
+					<executions>
+						<execution>
+							<id>default</id>
+							<goals>
+								<goal>lint</goal>
+								<goal>package</goal>
+							</goals>
+						</execution>
+					</executions>
+
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
