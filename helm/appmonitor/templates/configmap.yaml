@@ -9,6 +9,9 @@ data:
     
     # Springboot Admin
     spring.boot.admin.discovery.enabled=true
+    {{- if .Values.publicUrl.enabled }}
+    spring.boot.admin.ui.public-url={{ .Values.publicUrl.url }}
+    {{- end }}
     #spring.boot.admin.routes.endpoints=env, metrics, trace, jolokia, info, configprops
     
     #Kubernetes Cloud Service Discovery

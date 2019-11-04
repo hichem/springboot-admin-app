@@ -57,3 +57,7 @@ serviceAccount:
   create: true
   
 
+# Public url to be used when deploying the app through reverse proxy
+publicUrl:
+   enabled: false
+   url:
