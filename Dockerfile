@@ -16,10 +16,11 @@ ARG JAR_FILE
 COPY ${JAR_FILE} app.jar
 
 # Add App Insights Config File
-ADD AI-Agent.xml AI-Agent.xml
+# ADD AI-Agent.xml AI-Agent.xml
 
 # Download Azure App Insights Agent
-ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/2.5.0/applicationinsights-agent-2.5.0.jar applicationinsights-agent-2.5.0.jar
+# ADD https://github.com/microsoft/ApplicationInsights-Java/releases/download/2.5.0/applicationinsights-agent-2.5.0.jar applicationinsights-agent-2.5.0.jar
 
 # Run the jar file
-ENTRYPOINT ["java", "-javaagent:applicationinsights-agent-2.5.0.jar", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+#ENTRYPOINT ["java", "-javaagent:applicationinsights-agent-2.5.0.jar", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]

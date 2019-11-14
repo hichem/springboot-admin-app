@@ -58,13 +58,16 @@
 		</dependency>
 
 		<!-- Distributed Tracing Support -->
+		<!--
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-sleuth</artifactId>
 			<version>2.1.2.RELEASE</version>
 		</dependency>
+		-->
 
 		<!-- Azure App Insights -->
+		<!--
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>applicationinsights-spring-boot-starter</artifactId>
@@ -72,14 +75,10 @@
 		</dependency>
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
-			<artifactId>applicationinsights-logging-log4j2</artifactId>
-			<version>2.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.microsoft.azure</groupId>
 			<artifactId>applicationinsights-web-auto</artifactId>
 			<version>2.5.0</version>
 		</dependency>
+		 -->
 
 		<!-- Testing -->
 		<dependency>
