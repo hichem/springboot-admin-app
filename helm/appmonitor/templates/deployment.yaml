@@ -4,11 +4,10 @@ metadata:
   name: {{ include "app.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ include "app.name" . }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
     app.kubernetes.io/managed-by: helm
     app: {{ include "app.name" . }}
     version: "{{ .Chart.AppVersion }}"
-#{{ include "app.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -35,35 +34,28 @@ spec:
         - name: {{ .Values.image.pullSecret }}
       containers:
         - name: {{ .Chart.Name }}
-          #image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          env:
-            - name: USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: appmonitor
-                  key: spring.boot.admin.client.username
-            - name: PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: appmonitor
-                  key: spring.boot.admin.client.password
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-#          livenessProbe:
-#            httpGet:
-#              path: /live
-#              port: http
-#          readinessProbe:
-#            httpGet:
-#              path: /ready
-#              port: http
-#            initialDelaySeconds: 5
-#            periodSeconds: 5
-#            successThreshold: 1
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 20
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+            successThreshold: 1
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 30
+            timeoutSeconds: 2
+            periodSeconds: 8
+            failureThreshold: 1
+            successThreshold: 1
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

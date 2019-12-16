@@ -1,0 +1,57 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "app.fullname" . }}
+  namespace: {{ .Values.istio.namespace }}
+spec:
+  hosts:
+  - "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"         # Calls to internal app host
+  {{- if .Values.istio.ingress.subdomain.create }}                                             # Calls to external app sub-domain
+  - "{{ .Values.istio.ingress.subdomain.host }}"
+  {{- end}}
+  {{- if .Values.istio.ingress.fanout.create }}                                                # Calls to external app sub-path
+  - "{{ .Values.istio.ingress.fanout.host }}"
+  {{- end}}
+  gateways:
+  - {{ .Values.istio.gateway }}
+  - mesh
+  http:
+
+  ## Fanout Route to App
+  {{- if .Values.istio.ingress.fanout.create }}
+  - match:
+    - uri:
+        prefix: {{ .Values.istio.ingress.fanout.baseUrl }}
+    route:
+    - destination:
+        port:
+          number: {{ .Values.service.port }}
+        host: "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+    rewrite:
+      uri: /
+  {{- end}}
+
+  ## Sub-Domain and Internal Routes to App
+  {{- if .Values.istio.ingress.subdomain.create }} 
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        port:
+          number: {{ .Values.service.port }}
+        host: "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+  {{- end}}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "app.fullname" . }}
+  namespace: {{ .Values.istio.namespace }}
+spec:
+  host: "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }}
