@@ -3,7 +3,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: {{ include "app.fullname" . }}
-  namespace: {{ .Values.istio.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   hosts:
   - "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"         # Calls to internal app host
@@ -48,7 +48,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
   name: {{ include "app.fullname" . }}
-  namespace: {{ .Values.istio.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   host: "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
   trafficPolicy:
