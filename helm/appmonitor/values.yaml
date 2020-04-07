@@ -74,3 +74,9 @@ serviceAccount:
 publicUrl:
    enabled: false
    url:
+   
+azuread:
+  tenant: xxx
+  app_id: xxx
+  app_secret: xxx
+  authorized_group: dev

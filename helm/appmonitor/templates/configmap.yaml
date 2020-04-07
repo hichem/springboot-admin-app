@@ -24,6 +24,21 @@ data:
     spring.cloud.kubernetes.reload.period=15000
     spring.cloud.kubernetes.reload.strategy=restart_context
     
+    #server.forward-headers-strategy = FRAMEWORK
+    #server.use-forward-headers = true
+    #server.tomcat.internal-proxies=.*
+    
+    # Azure AD Authentication
+    spring.security.oauth2.client.registration.azure.provider=azure
+    azure.activedirectory.tenant-id={{ .Values.azuread.tenant }}
+    spring.security.oauth2.client.registration.azure.client-id={{ .Values.azuread.app_id }}
+    spring.security.oauth2.client.registration.azure.client-secret={{ .Values.azuread.app_secret }}
+    azure.activedirectory.active-directory-groups={{ .Values.azuread.authorized_group }}
+    spring.security.oauth2.client.provider.azure-oauth-provider.authorization-uri=https://login.microsoftonline.com/{{ .Values.azuread.tenant }}/oauth2/authorize
+    spring.security.oauth2.client.provider.azure-oauth-provider.token-uri=https://login.microsoftonline.com/{{ .Values.azuread.tenant }}/oauth2/token
+    spring.security.oauth2.client.provider.azure-oauth-provider.user-info-uri=https://login.microsoftonline.com/{{ .Values.azuread.tenant }}/openid/userinfo
+    spring.security.oauth2.client.provider.azure-oauth-provider.jwk-set-uri=https://login.microsoftonline.com/{{ .Values.azuread.tenant }}/discovery/keys
+
     #Spring Cloud Context Configuration required with auto reload config from configmap
     #https://stackoverflow.com/questions/54007907/spring-cloud-kubernetes-spring-boot-fails-to-start-when-config-reload-is-enabl
     management.endpoint.restart.enabled=true

@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.example</groupId>
 	<artifactId>appmonitor</artifactId>
-	<version>1.0</version>
+	<version>1.1</version>
 	<name>appmonitor</name>
 	<description>Monitoring Application based on SpringBoot Admin Library</description>
 
@@ -58,27 +58,36 @@
 		</dependency>
 
 		<!-- Distributed Tracing Support -->
-		<!--
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-			<version>2.1.2.RELEASE</version>
-		</dependency>
-		-->
+		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-sleuth</artifactId> 
+			<version>2.1.2.RELEASE</version> </dependency> -->
 
 		<!-- Azure App Insights -->
-		<!--
+		<!-- <dependency> <groupId>com.microsoft.azure</groupId> <artifactId>applicationinsights-spring-boot-starter</artifactId> 
+			<version>2.5.0</version> </dependency> <dependency> <groupId>com.microsoft.azure</groupId> 
+			<artifactId>applicationinsights-web-auto</artifactId> <version>2.5.0</version> 
+			</dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
-			<artifactId>applicationinsights-spring-boot-starter</artifactId>
-			<version>2.5.0</version>
+			<artifactId>azure-active-directory-spring-boot-starter</artifactId>
+			<version>2.2.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.microsoft.azure</groupId>
-			<artifactId>applicationinsights-web-auto</artifactId>
-			<version>2.5.0</version>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-client</artifactId>
 		</dependency>
-		 -->
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-oauth2-jose</artifactId>
+		</dependency>
+
 
 		<!-- Testing -->
 		<dependency>
