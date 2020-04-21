@@ -6,18 +6,19 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   hosts:
-  - "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"         # Calls to internal app host
+  - "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"         	   # Calls to internal app host
   {{- if .Values.istio.ingress.subdomain.create }}                                             # Calls to external app sub-domain
   - "{{ .Values.istio.ingress.subdomain.host }}"
   {{- end}}
   {{- if .Values.istio.ingress.fanout.create }}                                                # Calls to external app sub-path
   - "{{ .Values.istio.ingress.fanout.host }}"
   {{- end}}
-  gateways:
+  
+  gateways: 
   - {{ .Values.istio.gateway }}
   - mesh
+  
   http:
-
   ## Fanout Route to App
   {{- if .Values.istio.ingress.fanout.create }}
   - match:
@@ -28,16 +29,13 @@ spec:
         port:
           number: {{ .Values.service.port }}
         host: "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
-    rewrite:
-      uri: /
+    #rewrite:
+    #  uri: /
   {{- end}}
 
   ## Sub-Domain and Internal Routes to App
   {{- if .Values.istio.ingress.subdomain.create }} 
-  - match:
-    - uri:
-        prefix: /
-    route:
+  - route:
     - destination:
         port:
           number: {{ .Values.service.port }}
@@ -53,5 +51,8 @@ spec:
   host: "{{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local"
   trafficPolicy:
     tls:
-      mode: ISTIO_MUTUAL
+      mode: {{ .Values.istio.meshTlsPolicy }}
+    loadBalancer:
+      consistentHash:
+        useSourceIp: true
 {{- end }}
